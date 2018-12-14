@@ -1,2 +1,7 @@
+# core
+flask
 datadog
+
+# testing
 pytest
+pytest-flask
