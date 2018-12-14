@@ -33,8 +33,8 @@ class Config(object):
                 variables.
         """
         bail_out = False
-        for attr in self.MANDATORY_FIELDS:
-            if getattr(self, attr, None):
+        for attr in self.MANDATORY_ATTRIBUTES:
+            if getattr(self, attr, None) is None:
                 bail_out = True
                 logging.error("Environment variable '{}' is not set".format(attr.upper()))
 
