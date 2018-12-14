@@ -2,32 +2,41 @@ import logging
 
 from os import getenv
 
-from .api import API
+from .exceptions import ConfigException
 
 
-MANDATORY_ENV_VARS = [
-    "DD_API_KEY",
-    "FUNCTION_NAME",
-]
-
-
-def init():
-    """Initializes the Cloud Function with some environment variables.
-    This function has as a side-effect the configuration of the
-    Datadog API.
+class Config(object):
+    """Config class used to store the environment configuration for
+    this Cloud Function execution.
     """
-    # Ensure the environment is properly configured
-    bail_out = False
-    for key in MANDATORY_ENV_VARS:
-        if getenv(key) is None:
-            bail_out = True
-            logging.error("Environment variable '{}' is not set.".format(key))
+    MANDATORY_ATTRIBUTES = [
+        "dd_api_key",
+        "function_name",
+        "bearer_token",
+    ]
 
-    if bail_out:
-        raise RuntimeError("mandatory environment variables are not set.")
+    def __init__(self):
+        """Initialize the Config instance using environment variables."""
+        self.dd_api_key = getenv("DD_API_KEY")
+        self.function_name = getenv("FUNCTION_NAME")
+        self.bearer_token = getenv("BEARER_TOKEN")
 
-    # Configure the environment
-    api_key = getenv("DD_API_KEY")
-    function_name = getenv("FUNCTION_NAME")
+    def validate(self):
+        """Validate the configuration instance.
 
-    return API(api_key, function_name)
+        Returns:
+            A boolean if the environment is properly configured.
+
+        Raises:
+            ConfigException: An error occurred when initializing the
+                environment. Mostly related to missing environment
+                variables.
+        """
+        bail_out = False
+        for attr in self.MANDATORY_FIELDS:
+            if getattr(self, attr, None):
+                bail_out = True
+                logging.error("Environment variable '{}' is not set".format(attr.upper()))
+
+        if bail_out:
+            raise ConfigException("Mandatory environment variables are not set")
