@@ -31,6 +31,8 @@ class DatadogAPI(object):
         if response.get("status") != "ok":
             logging.error(response)
 
+        return response
+
     def send_pressure(self, value, kind=None):
         """Sends pressure metrics to Datadog."""
         tags = [kind] if kind is not None else None
@@ -44,3 +46,5 @@ class DatadogAPI(object):
 
         if response.get("status") != "ok":
             logging.error(response)
+
+        return response
