@@ -1,45 +1,32 @@
 import logging
 
-from hev import conf, DatadogAPI, auth
-from hev.constants import KIND_DIASTOLIC, KIND_SYSTOLIC
-from hev.exceptions import ConfigException, NotAuthorized
+from flask import Flask, request
+
+from functions import entrypoint
 
 
-def webhook(request):
-    """Cloud Function entrypoint.
-
-    Args:
-        request: Flask Request object
+def create_app():
+    """Create a development Flask application.
 
     Returns:
-        The response text or any set of values that can be turned into a
-        Response object using
-        `make_response <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>`.
+        A Flask application that is used only for Debug and Integration
+            tests. This is not meant to be used, because the main
+            entrypoint is expected to be executed in Google Cloud Functions.
     """
-    # Validate Environment Configuration
-    try:
-        conf.validate()
-        auth.is_authorized(request, conf.bearer_token)
-    except ConfigException as e:
-        logging.critical("Unable to configure Cloud Function: %s", str(e))
-        return
-    except NotAuthorized as e:
-        # TODO: update the response so that it can be parsed from a
-        # Google Action
-        logging.critical(str(e))
-        return ("Not Authorized", 401)
+    app = Flask(__name__)
 
-    # Prepare the API
-    api = DatadogAPI(conf.dd_api_key, conf.function_name)
+    @app.route('/webhook')
+    def webhook():
+        return entrypoint(request)
 
-    # Collect values from Cloud Datastore
-    # TODO: Static values, NotImplemented
-    bpm, value_min, value_max = 70, 80, 144
+    return app
 
-    # Send HEV parameters to Datadog
-    # TODO: check responses and return the right answer to the client
-    api.send_bpm(bpm)
-    api.send_pressure(value_min, kind=KIND_DIASTOLIC)
-    api.send_pressure(value_max, kind=KIND_SYSTOLIC)
 
-    logging.info("Cloud Function executed correctly.")
+if __name__ == '__main__':
+    # Webhook executed in a running Flask server. 
+    # NOTE: This mode MUST be used only for debug and MUST NEVER include
+    # any kind of logic because it will NOT be executed in a Google 
+    # Cloud Function
+    logging.warning("'/webhook' function is meant to be deployed in Google Cloud Function")
+    app = create_app()
+    app.run()
