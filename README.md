@@ -1,4 +1,4 @@
-# HEV (Hazardous Environment Suite)
+# HEV (Hazardous Environment Suit)
 
 Bootstrap project that uses Google Cloud Functions to keep track of vital parameters in Datadog.
 The project is under development.
