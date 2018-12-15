@@ -56,13 +56,32 @@ def test_webhook_success(client, config):
     config.function_name = "test_config"
     config.bearer_token = "good_token"
     config.dry_run = True
+    payload = {"queryResult": {"parameters": {"bpm": 1, "min": 2, "max": 3}}}
     resp = client.post(
-        url_for("webhook"), headers=[("Authorization", "Bearer good_token")]
+        url_for("webhook"),
+        headers=[("Authorization", "Bearer good_token")],
+        json=payload,
     )
     data = json.loads(resp.data)
 
     assert data["message"] == "Success"
     assert resp.status_code == 201
+
+
+def test_webhook_bad_request(client, config):
+    # ensure the Cloud Function succeed with the right Configuration
+    # and Authorization
+    config.dd_api_key = "api_key"
+    config.function_name = "test_config"
+    config.bearer_token = "good_token"
+    config.dry_run = True
+    resp = client.post(
+        url_for("webhook"), headers=[("Authorization", "Bearer good_token")], json={}
+    )
+    data = json.loads(resp.data)
+
+    assert data["message"] == "Missing mandatory fields: ['bpm', 'min', 'max']"
+    assert resp.status_code == 400
 
 
 def test_webhook_failure_bpm(client, config, monkeypatch):
@@ -77,9 +96,12 @@ def test_webhook_failure_bpm(client, config, monkeypatch):
     config.function_name = "test_config"
     config.bearer_token = "good_token"
     config.dry_run = True
+    payload = {"queryResult": {"parameters": {"bpm": 1, "min": 2, "max": 3}}}
 
     resp = client.post(
-        url_for("webhook"), headers=[("Authorization", "Bearer good_token")]
+        url_for("webhook"),
+        headers=[("Authorization", "Bearer good_token")],
+        json=payload,
     )
     data = json.loads(resp.data)
 

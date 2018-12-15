@@ -4,9 +4,9 @@ import logging
 
 from flask import abort
 
-from hev.api import DatadogAPI
+from hev.api import DatadogAPI, DialogFlowRequest
 from hev.constants import KIND_DIASTOLIC, KIND_SYSTOLIC
-from hev.exceptions import ConfigException, NotAuthorized
+from hev.exceptions import ConfigException, NotAuthorized, BadRequest
 
 
 def entrypoint(request):
@@ -24,10 +24,14 @@ def entrypoint(request):
     if request.method != "POST":
         return abort(405)
 
-    # Validate Environment Configuration
     try:
+        # Validate Environment Configuration
         hev.conf.validate()
         hev.auth.is_authorized(request, hev.conf.bearer_token)
+
+        # Validate Request Object
+        dialog = DialogFlowRequest(request)
+        dialog.validate()
     except ConfigException as e:
         logging.critical("Unable to configure Cloud Function: %s", str(e))
         response = json.dumps({"message": "Configuration error"})
@@ -38,13 +42,18 @@ def entrypoint(request):
         logging.critical(str(e))
         response = json.dumps({"message": "Not Authorized"})
         return (response, 401)
+    except BadRequest as e:
+        response = json.dumps({"message": str(e)})
+        logging.critical(response)
+        return (response, 400)
 
     # Prepare the API
     api = DatadogAPI(hev.conf.dd_api_key, hev.conf.function_name, hev.conf.dry_run)
 
-    # Collect values from Cloud Datastore
-    # TODO: Static values, NotImplemented
-    bpm, value_min, value_max = 70, 80, 144
+    # Get values from DialogFlow request
+    bpm = dialog.get_parameter("bpm")
+    value_min = dialog.get_parameter("min")
+    value_max = dialog.get_parameter("max")
 
     # Send HEV parameters to Datadog
     op_1 = api.send_bpm(bpm)
