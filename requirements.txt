@@ -4,8 +4,6 @@
 #
 #    pip-compile --output-file requirements.txt requirements.in
 #
-atomicwrites==1.2.1       # via pytest
-attrs==18.2.0             # via pytest
 certifi==2018.11.29       # via requests
 chardet==3.0.4            # via requests
 click==7.0                # via flask
@@ -16,12 +14,6 @@ idna==2.8                 # via requests
 itsdangerous==1.1.0       # via flask
 jinja2==2.10              # via flask
 markupsafe==1.1.0         # via jinja2
-more-itertools==4.3.0     # via pytest
-pluggy==0.8.0             # via pytest
-py==1.7.0                 # via pytest
-pytest-flask==0.14.0
-pytest==4.0.2
 requests==2.21.0          # via datadog
-six==1.12.0               # via more-itertools, pytest
 urllib3==1.24.1           # via requests
-werkzeug==0.14.1          # via flask, pytest-flask
+werkzeug==0.14.1          # via flask
