@@ -1,6 +1,8 @@
 import logging
 import datadog
 
+from .exceptions import BadRequest
+
 
 class DatadogAPI(object):
     """API abstraction built on top of Datadog API. This instance can
@@ -56,3 +58,63 @@ class DatadogAPI(object):
             return False
         else:
             return True
+
+
+class DialogFlowRequest(object):
+    """DialogFlow request class used to validate received data.
+    Any interaction with the DialogFlow service must be
+    encapsulated in this class.
+    """
+
+    MANDATORY = ["bpm", "min", "max"]
+
+    def __init__(self, request):
+        """Wrap Flask Request instance that contains DialogFlow data.
+        The constructor stores parsed JSON data.
+
+        Args:
+            request: Flask Request instance.
+
+        Returns:
+            A DialogFlow request instance that contains utility methods
+            to manipulate and retrieve parameters.
+        """
+        self._data = request.get_json(silent=True)
+
+    def validate(self):
+        """Validate DialogFlowRequest to be sure it contains expected data.
+
+        Returns:
+            A boolean (True) if the request passes this validator.
+
+        Raises:
+            BadRequest: malformed data must abort the function execution
+        """
+        if self._data is None:
+            raise BadRequest("Malformed request")
+
+        missing = []
+        for field in self.MANDATORY:
+            if self.get_parameter(field) is None:
+                missing.append(field)
+
+        if missing:
+            raise BadRequest("Missing mandatory fields: {}".format(missing))
+
+        return True
+
+    def get_parameter(self, param):
+        """Get the DialogFlow parameter.
+
+        Args:
+            param: the parameter name to extract
+
+        Returns:
+            The DialogFlow parameter, or `None` if not present
+        """
+        try:
+            result = self._data["queryResult"]["parameters"][param]
+        except KeyError:
+            result = None
+
+        return result

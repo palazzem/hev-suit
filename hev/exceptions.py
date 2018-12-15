@@ -13,3 +13,11 @@ class NotAuthorized(Exception):
     """
 
     pass
+
+
+class BadRequest(Exception):
+    """BadRequest must be raised when received Flask Request
+    contains malformed data.
+    """
+
+    pass

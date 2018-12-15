@@ -1,8 +1,12 @@
+import pytest
 import logging
 import datadog
 
-from hev.api import DatadogAPI
+from flask import request
+
+from hev.api import DatadogAPI, DialogFlowRequest
 from hev.constants import KIND_DIASTOLIC, KIND_SYSTOLIC
+from hev.exceptions import BadRequest
 
 
 def test_datadog_api_init():
@@ -84,3 +88,64 @@ def test_send_pressure_failure(monkeypatch, caplog):
 
     assert caplog.record_tuples == [("root", logging.ERROR, "{'status': 'failure'}")]
     assert status is False
+
+
+def test_dialog_flow_init(app):
+    # ensure a DialogFlow class can parse Flask Request instance
+    with app.test_request_context(json={"key": "value"}):
+        dialog = DialogFlowRequest(request)
+        assert dialog._data == {"key": "value"}
+
+
+def test_dialog_flow_init_malformed(app):
+    # ensure a DialogFlow class can parse Flask Request instance
+    with app.test_request_context(data="some_value"):
+        dialog = DialogFlowRequest(request)
+        assert dialog._data is None
+
+
+def test_dialog_flow_init_malformed_json(app):
+    # ensure a DialogFlow class can parse Flask Request instance
+    with app.test_request_context(
+        data="not_json_data", content_type="application/json"
+    ):
+        dialog = DialogFlowRequest(request)
+        assert dialog._data is None
+
+
+def test_dialog_flow_validation(app):
+    # ensure a deserialized payload is considered valid
+    with app.test_request_context(
+        json={"queryResult": {"parameters": {"bpm": 42, "min": 42, "max": 42}}}
+    ):
+        assert DialogFlowRequest(request).validate() is True
+
+
+def test_dialog_flow_mandatory_fields(app):
+    # ensure some fields are mandatory to pass the validation
+    assert DialogFlowRequest.MANDATORY == ["bpm", "min", "max"]
+
+
+def test_dialog_flow_validation_error(app):
+    # ensure a deserialized payload without all the values raises an Exception
+    with app.test_request_context(json={"queryResult": {"parameters": {}}}):
+        with pytest.raises(BadRequest):
+            DialogFlowRequest(request).validate()
+
+
+def test_dialog_flow_validation_empty(app):
+    # ensure an empty payload raises a BadRequest exception
+    with app.test_request_context():
+        with pytest.raises(BadRequest):
+            DialogFlowRequest(request).validate()
+
+
+def test_dialog_flow_get_parameter(app):
+    # ensure a deserialized payload is considered valid
+    with app.test_request_context(
+        json={"queryResult": {"parameters": {"bpm": 1, "min": 2, "max": 3}}}
+    ):
+        dialog = DialogFlowRequest(request)
+        assert dialog.get_parameter("bpm") == 1
+        assert dialog.get_parameter("min") == 2
+        assert dialog.get_parameter("max") == 3
