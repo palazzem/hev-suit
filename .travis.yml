@@ -1,0 +1,17 @@
+sudo: false
+dist: xenial
+cache: pip
+language: python
+
+matrix:
+  fast_finish: true
+  include:
+    - { python: "3.7", env: TOXENV=lint }
+    - { python: "3.7", env: TOXENV=py37 }
+
+install: pip install tox tox-travis tox-venv
+script: tox
+
+after_success:
+  - pip install codecov
+  - codecov

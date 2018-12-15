@@ -1,5 +1,8 @@
 # HEV (Hazardous Environment Suit)
 
+[![Build Status](https://travis-ci.org/palazzem/hev-suit.svg?branch=master)](https://travis-ci.org/palazzem/hev-suit)
+[![codecov](https://codecov.io/gh/palazzem/hev-suit/branch/master/graph/badge.svg)](https://codecov.io/gh/palazzem/hev-suit)
+
 HEV suit is a Python project that runs on [Google Cloud Functions][2]. It accepts requests from any
 kind of REST client, even though the format is specific for [DialogFlow requests][1].
 The design is the following:
