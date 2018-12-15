@@ -35,12 +35,12 @@ def test_config_init_with_envs(monkeypatch):
     assert config.dd_api_key == "api_key"
     assert config.function_name == "test_config"
     assert config.bearer_token == "bearer_token"
-    assert config.dry_run == True
+    assert config.dry_run is True
 
 
 def test_config_validate_exception():
     # ensure a not configured environment doesn't pass Config validation
     config = Config()
 
-    with pytest.raises(ConfigException) as excinfo:
+    with pytest.raises(ConfigException):
         config.validate()
