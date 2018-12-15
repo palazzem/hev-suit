@@ -22,7 +22,7 @@ def test_send_bpm(monkeypatch):
         return {"status": "ok"}
 
     api = DatadogAPI("api_key", "test_config")
-    monkeypatch.setattr(api._api.Metric, 'send', mock_return)
+    monkeypatch.setattr(api._api.Metric, "send", mock_return)
     status = api.send_bpm(42)
 
     assert status is True
@@ -34,12 +34,10 @@ def test_send_bpm_failure(monkeypatch, caplog):
         return {"status": "failure"}
 
     api = DatadogAPI("api_key", "test_config")
-    monkeypatch.setattr(api._api.Metric, 'send', mock_return)
+    monkeypatch.setattr(api._api.Metric, "send", mock_return)
     status = api.send_bpm(42)
 
-    assert caplog.record_tuples == [
-        ("root", logging.ERROR, "{'status': 'failure'}"),
-    ]
+    assert caplog.record_tuples == [("root", logging.ERROR, "{'status': 'failure'}")]
     assert status is False
 
 
@@ -53,7 +51,7 @@ def test_send_pressure_min(monkeypatch):
         return {"status": "ok"}
 
     api = DatadogAPI("api_key", "test_config")
-    monkeypatch.setattr(api._api.Metric, 'send', mock_return)
+    monkeypatch.setattr(api._api.Metric, "send", mock_return)
     status = api.send_pressure(42, KIND_DIASTOLIC)
 
     assert status is True
@@ -69,7 +67,7 @@ def test_send_pressure_max(monkeypatch):
         return {"status": "ok"}
 
     api = DatadogAPI("api_key", "test_config")
-    monkeypatch.setattr(api._api.Metric, 'send', mock_return)
+    monkeypatch.setattr(api._api.Metric, "send", mock_return)
     status = api.send_pressure(42, KIND_SYSTOLIC)
 
     assert status is True
@@ -81,10 +79,8 @@ def test_send_pressure_failure(monkeypatch, caplog):
         return {"status": "failure"}
 
     api = DatadogAPI("api_key", "test_config")
-    monkeypatch.setattr(api._api.Metric, 'send', mock_return)
+    monkeypatch.setattr(api._api.Metric, "send", mock_return)
     status = api.send_pressure(42, KIND_DIASTOLIC)
 
-    assert caplog.record_tuples == [
-        ("root", logging.ERROR, "{'status': 'failure'}"),
-    ]
+    assert caplog.record_tuples == [("root", logging.ERROR, "{'status': 'failure'}")]
     assert status is False

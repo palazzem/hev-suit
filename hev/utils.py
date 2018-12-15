@@ -1,6 +1,6 @@
 def as_bool(v):
     """Convert the given string in a Boolean value.
-    
+
     Args:
         string: the string that should be converted in boolean
 

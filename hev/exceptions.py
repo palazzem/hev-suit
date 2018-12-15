@@ -2,6 +2,7 @@ class ConfigException(Exception):
     """ConfigException must be raised when a configuration
     is missing for this Google Cloud Function.
     """
+
     pass
 
 
@@ -10,4 +11,5 @@ class NotAuthorized(Exception):
     is not available in the request headers or if it's
     wrong.
     """
+
     pass

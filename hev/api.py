@@ -11,11 +11,10 @@ class DatadogAPI(object):
     Initializing this class has a side-effect that is initializing
     the static Datadog API class.
     """
+
     def __init__(self, api_key, function_name, dry_run=False):
         # Init Datadog API
-        options = {
-            "api_key": api_key,
-        }
+        options = {"api_key": api_key}
         datadog.initialize(**options)
         self._api = datadog.api
         self._function_name = function_name
@@ -28,9 +27,7 @@ class DatadogAPI(object):
             return True
 
         response = self._api.Metric.send(
-            host=self._function_name,
-            metric="hev.parameters.bpm",
-            points=value,
+            host=self._function_name, metric="hev.parameters.bpm", points=value
         )
 
         if response.get("status") != "ok":

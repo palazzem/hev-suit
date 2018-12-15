@@ -14,6 +14,7 @@ def test_config_init():
     assert config.bearer_token is None
     assert config.dry_run is False
 
+
 def test_mandatory_attributes():
     # ensure critical attributes are mandatory; there is
     # no reason to update this test unless you want to
@@ -22,6 +23,7 @@ def test_mandatory_attributes():
     assert "dd_api_key" in Config.MANDATORY_ATTRIBUTES
     assert "function_name" in Config.MANDATORY_ATTRIBUTES
     assert "bearer_token" in Config.MANDATORY_ATTRIBUTES
+
 
 def test_config_init_with_envs(monkeypatch):
     # ensure the Config object is initialized with environment variables
@@ -34,6 +36,7 @@ def test_config_init_with_envs(monkeypatch):
     assert config.function_name == "test_config"
     assert config.bearer_token == "bearer_token"
     assert config.dry_run == True
+
 
 def test_config_validate_exception():
     # ensure a not configured environment doesn't pass Config validation

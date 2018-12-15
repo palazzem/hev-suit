@@ -23,10 +23,12 @@ def create_app():
 
 
 if __name__ == "__main__":
-    # Webhook executed in a running Flask server. 
+    # Webhook executed in a running Flask server.
     # NOTE: This mode MUST be used only for debug and MUST NEVER include
-    # any kind of logic because it will NOT be executed in a Google 
+    # any kind of logic because it will NOT be executed in a Google
     # Cloud Function
-    logging.warning("'/webhook' function is meant to be deployed in Google Cloud Function")
+    logging.warning(
+        "'/webhook' function is meant to be deployed in Google Cloud Function"
+    )
     app = create_app()
     app.run()

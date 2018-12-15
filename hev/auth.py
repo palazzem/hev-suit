@@ -25,9 +25,11 @@ def is_authorized(request, authorized_token):
     auth_header = request.headers.get("Authorization")
 
     # do something only if request contains a Bearer token
-    if auth_header is None or \
-        not auth_header.startswith("Bearer") or \
-        auth_header[7:] != authorized_token:
+    if (
+        auth_header is None
+        or not auth_header.startswith("Bearer")
+        or auth_header[7:] != authorized_token
+    ):
         raise NotAuthorized("Authorization headers are missing")
 
     return True

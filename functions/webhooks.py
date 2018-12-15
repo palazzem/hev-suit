@@ -40,11 +40,7 @@ def entrypoint(request):
         return (response, 401)
 
     # Prepare the API
-    api = DatadogAPI(
-        hev.conf.dd_api_key, 
-        hev.conf.function_name,
-        hev.conf.dry_run,
-    )
+    api = DatadogAPI(hev.conf.dd_api_key, hev.conf.function_name, hev.conf.dry_run)
 
     # Collect values from Cloud Datastore
     # TODO: Static values, NotImplemented

@@ -10,11 +10,8 @@ class Config(object):
     """Config class used to store the environment configuration for
     this Cloud Function execution.
     """
-    MANDATORY_ATTRIBUTES = [
-        "dd_api_key",
-        "function_name",
-        "bearer_token",
-    ]
+
+    MANDATORY_ATTRIBUTES = ["dd_api_key", "function_name", "bearer_token"]
 
     def __init__(self):
         """Initialize the Config instance using environment variables."""
@@ -38,7 +35,9 @@ class Config(object):
         for attr in self.MANDATORY_ATTRIBUTES:
             if getattr(self, attr, None) is None:
                 bail_out = True
-                logging.error("Environment variable '{}' is not set".format(attr.upper()))
+                logging.error(
+                    "Environment variable '{}' is not set".format(attr.upper())
+                )
 
         if bail_out:
             raise ConfigException("Mandatory environment variables are not set")
