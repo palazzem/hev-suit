@@ -15,14 +15,14 @@ def create_app():
     """
     app = Flask(__name__)
 
-    @app.route('/webhook')
+    @app.route("/webhook", methods=["POST"])
     def webhook():
         return entrypoint(request)
 
     return app
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Webhook executed in a running Flask server. 
     # NOTE: This mode MUST be used only for debug and MUST NEVER include
     # any kind of logic because it will NOT be executed in a Google 
