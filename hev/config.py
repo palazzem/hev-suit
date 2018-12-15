@@ -2,6 +2,7 @@ import logging
 
 from os import getenv
 
+from .utils import as_bool
 from .exceptions import ConfigException
 
 
@@ -20,6 +21,7 @@ class Config(object):
         self.dd_api_key = getenv("DD_API_KEY")
         self.function_name = getenv("FUNCTION_NAME")
         self.bearer_token = getenv("BEARER_TOKEN")
+        self.dry_run = as_bool(getenv("DRY_RUN", False))
 
     def validate(self):
         """Validate the configuration instance.

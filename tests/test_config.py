@@ -12,6 +12,7 @@ def test_config_init():
     assert config.dd_api_key is None
     assert config.function_name is None
     assert config.bearer_token is None
+    assert config.dry_run is False
 
 def test_mandatory_attributes():
     # ensure critical attributes are mandatory; there is
@@ -27,10 +28,12 @@ def test_config_init_with_envs(monkeypatch):
     monkeypatch.setitem(os.environ, "DD_API_KEY", "api_key")
     monkeypatch.setitem(os.environ, "FUNCTION_NAME", "test_config")
     monkeypatch.setitem(os.environ, "BEARER_TOKEN", "bearer_token")
+    monkeypatch.setitem(os.environ, "DRY_RUN", "True")
     config = Config()
     assert config.dd_api_key == "api_key"
     assert config.function_name == "test_config"
     assert config.bearer_token == "bearer_token"
+    assert config.dry_run == True
 
 def test_config_validate_exception():
     # ensure a not configured environment doesn't pass Config validation

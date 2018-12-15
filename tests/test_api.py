@@ -23,9 +23,9 @@ def test_send_bpm(monkeypatch):
 
     api = DatadogAPI("api_key", "test_config")
     monkeypatch.setattr(api._api.Metric, 'send', mock_return)
-    response = api.send_bpm(42)
+    status = api.send_bpm(42)
 
-    assert response == {"status": "ok"}
+    assert status is True
 
 
 def test_send_bpm_failure(monkeypatch, caplog):
@@ -35,12 +35,12 @@ def test_send_bpm_failure(monkeypatch, caplog):
 
     api = DatadogAPI("api_key", "test_config")
     monkeypatch.setattr(api._api.Metric, 'send', mock_return)
-    response = api.send_bpm(42)
+    status = api.send_bpm(42)
 
     assert caplog.record_tuples == [
         ("root", logging.ERROR, "{'status': 'failure'}"),
     ]
-    assert response == {"status": "failure"}
+    assert status is False
 
 
 def test_send_pressure_min(monkeypatch):
@@ -54,9 +54,9 @@ def test_send_pressure_min(monkeypatch):
 
     api = DatadogAPI("api_key", "test_config")
     monkeypatch.setattr(api._api.Metric, 'send', mock_return)
-    response = api.send_pressure(42, KIND_DIASTOLIC)
+    status = api.send_pressure(42, KIND_DIASTOLIC)
 
-    assert response == {"status": "ok"}
+    assert status is True
 
 
 def test_send_pressure_max(monkeypatch):
@@ -70,9 +70,9 @@ def test_send_pressure_max(monkeypatch):
 
     api = DatadogAPI("api_key", "test_config")
     monkeypatch.setattr(api._api.Metric, 'send', mock_return)
-    response = api.send_pressure(42, KIND_SYSTOLIC)
+    status = api.send_pressure(42, KIND_SYSTOLIC)
 
-    assert response == {"status": "ok"}
+    assert status is True
 
 
 def test_send_pressure_failure(monkeypatch, caplog):
@@ -82,9 +82,9 @@ def test_send_pressure_failure(monkeypatch, caplog):
 
     api = DatadogAPI("api_key", "test_config")
     monkeypatch.setattr(api._api.Metric, 'send', mock_return)
-    response = api.send_pressure(42, KIND_DIASTOLIC)
+    status = api.send_pressure(42, KIND_DIASTOLIC)
 
     assert caplog.record_tuples == [
         ("root", logging.ERROR, "{'status': 'failure'}"),
     ]
-    assert response == {"status": "failure"}
+    assert status is False
